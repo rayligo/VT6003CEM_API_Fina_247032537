@@ -52,7 +52,7 @@ const koa_router_1 = __importDefault(require("koa-router"));
 const koa_bodyparser_1 = __importDefault(require("koa-bodyparser"));
 const model = __importStar(require("../models/users"));
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
-const prefix = '/api/v1/users';
+const prefix = "/api/v1/users";
 const router = new koa_router_1.default({ prefix: prefix });
 exports.router = router;
 const getAll = (ctx, next) => __awaiter(void 0, void 0, void 0, function* () {
@@ -77,12 +77,12 @@ const doSearch = (ctx, next) => __awaiter(void 0, void 0, void 0, function* () {
     let result;
     // search by single field and field contents
     // need to validate q input
-    if (ctx.state.user.user.role === 'admin') {
+    if (ctx.state.user.user.role === "admin") {
         try {
             if (q !== "")
                 result = yield model.getSearch(fields, q);
             else {
-                console.log('get all');
+                console.log("get all");
                 result = yield model.getAll(limit, page);
                 console.log(result);
             }
@@ -90,7 +90,7 @@ const doSearch = (ctx, next) => __awaiter(void 0, void 0, void 0, function* () {
                 if (fields !== "") {
                     // first ensure the fields are contained in an array
                     // need this since a single field in the query is passed as a string
-                    console.log('fields' + fields);
+                    console.log("fields" + fields);
                     if (!Array.isArray(fields)) {
                         fields = [fields];
                     }
@@ -120,9 +120,9 @@ const doSearch = (ctx, next) => __awaiter(void 0, void 0, void 0, function* () {
 });
 const getById = (ctx, next) => __awaiter(void 0, void 0, void 0, function* () {
     let id = ctx.params.id;
-    console.log('user.id ' + ctx.state.user.user.id);
-    console.log('params.id ' + id);
-    if (ctx.state.user.user.role === 'admin' || ctx.state.user.user.id == id) {
+    console.log("user.id " + ctx.state.user.user.id);
+    console.log("params.id " + id);
+    if (ctx.state.user.user.role === "admin" || ctx.state.user.user.id == id) {
         let user = yield model.getByUserId(id);
         if (user.length) {
             ctx.body = user[0];
@@ -135,25 +135,39 @@ const getById = (ctx, next) => __awaiter(void 0, void 0, void 0, function* () {
 });
 const createUser = (ctx, next) => __awaiter(void 0, void 0, void 0, function* () {
     const body = ctx.request.body;
-    let avatarurl = ' ';
+    let avatarurl = " ";
     if (body.avatarurl)
         avatarurl = body.avatarurl;
     let username = body.username;
     const salt = bcryptjs_1.default.genSaltSync(10);
     const hashpwd = bcryptjs_1.default.hashSync(`${body.password}`, salt);
     let email = body.email;
-    let role = 'user';
+    let role = "user";
     let secretkey = body.actiCode;
-    let secretList = ["mongkok_123456789", "mongkok_987654321", "shatin_123456789", "shatin_987654321", "chaiwan_123456789", "chaiwan_987654321"];
+    let secretList = [
+        "mongkok_123456789",
+        "mongkok_987654321",
+        "shatin_123456789",
+        "shatin_987654321",
+        "chaiwan_123456789",
+        "chaiwan_987654321",
+    ];
     if (secretkey) {
         for (let i = 0; i < secretList.length; i++)
             if (secretkey == secretList[i]) {
-                role = 'admin';
+                role = "admin";
                 break;
             }
     }
     console.log("role ", role);
-    let newUser = { username: username, password: hashpwd, passwordsalt: salt, email: email, avatarurl: avatarurl, role: role };
+    let newUser = {
+        username: username,
+        password: hashpwd,
+        passwordsalt: salt,
+        email: email,
+        avatarurl: avatarurl,
+        role: role,
+    };
     let result = yield model.add(newUser);
     if (result) {
         ctx.status = 201;
@@ -184,14 +198,14 @@ const updateUser = (ctx) => __awaiter(void 0, void 0, void 0, function* () {
     let c = ctx.request.body;
     let pwd = c.password;
     let hash = ctx.state.user.user.password;
-    if (pwd == '') // No update pwd  input
-     {
+    if (pwd == "") {
+        // No update pwd  input
         //console.log('hash '+hash)
         c.password = hash;
         //console.log('c.password '+c.password)
     }
-    if (!bcryptjs_1.default.compareSync(pwd, hash) && pwd != '') //Encrypte & update  new pwd 
-     {
+    if (!bcryptjs_1.default.compareSync(pwd, hash) && pwd != "") {
+        //Encrypte & update  new pwd
         const salt = bcryptjs_1.default.genSaltSync(10);
         const hashpwd = bcryptjs_1.default.hashSync(`${pwd}`, salt);
         // console.log('hashpwd  '+ hashpwd )
@@ -201,7 +215,7 @@ const updateUser = (ctx) => __awaiter(void 0, void 0, void 0, function* () {
     else {
         c.password = hash;
     } // New pwd = old pwd
-    if (ctx.state.user.user.role === 'admin' || ctx.state.user.user.id == id) {
+    if (ctx.state.user.user.role === "admin" || ctx.state.user.user.id == id) {
         let result = yield model.update(c, id);
         if (result) {
             ctx.status = 201;
@@ -209,13 +223,15 @@ const updateUser = (ctx) => __awaiter(void 0, void 0, void 0, function* () {
         }
     }
     else {
-        ctx.body = { msg: ' Profile records can be updated by its owner or admin role' };
+        ctx.body = {
+            msg: " Profile records can be updated by its owner or admin role",
+        };
         ctx.status = 401;
     }
 });
 const deleteUser = (ctx, next) => __awaiter(void 0, void 0, void 0, function* () {
     let id = +ctx.params.id;
-    if (ctx.state.user.user.role === 'admin' || ctx.state.user.user.id == id) {
+    if (ctx.state.user.user.role === "admin" || ctx.state.user.user.id == id) {
         let user = yield model.deleteById(id);
         ctx.status = 201;
         ctx.body = `User with id ${id} deleted`;
@@ -226,10 +242,10 @@ const deleteUser = (ctx, next) => __awaiter(void 0, void 0, void 0, function* ()
         ctx.status = 401;
     }
 });
-router.get('/', auth_1.basicAuth, doSearch);
+router.get("/", auth_1.basicAuth, doSearch);
 //router.get('/search', basicAuth, doSearch);
-router.post('/', (0, koa_bodyparser_1.default)(), validation_1.validateUser, createUser);
-router.get('/:id([0-9]{1,})', auth_1.basicAuth, getById);
-router.put('/:id([0-9]{1,})', auth_1.basicAuth, (0, koa_bodyparser_1.default)(), updateUser);
-router.del('/:id([0-9]{1,})', auth_1.basicAuth, deleteUser);
-router.post('/login', auth_1.basicAuth, login);
+router.post("/", (0, koa_bodyparser_1.default)(), validation_1.validateUser, createUser);
+router.get("/:id([0-9]{1,})", auth_1.basicAuth, getById);
+router.put("/:id([0-9]{1,})", auth_1.basicAuth, (0, koa_bodyparser_1.default)(), updateUser);
+router.del("/:id([0-9]{1,})", auth_1.basicAuth, deleteUser);
+router.post("/login", auth_1.basicAuth, login);

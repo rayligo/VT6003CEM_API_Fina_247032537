@@ -51,23 +51,23 @@ const passport_http_1 = require("passport-http");
 const users = __importStar(require("../models/users"));
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const verifyPassword = (user, password) => {
-    console.log('db loaded user hashed pwd: ' + user.password);
-    console.log('input password ' + password);
+    console.log("db loaded user hashed pwd: " + user.password);
+    console.log("input password " + password);
     const hash = user.password;
     return bcryptjs_1.default.compareSync(password, hash);
 };
 koa_passport_1.default.use(new passport_http_1.BasicStrategy((username, password, done) => __awaiter(void 0, void 0, void 0, function* () {
     // Replace this with your own authentication logic
     /*if (username === "admin" && password === "password") {tsc
-  
-      done(null, { username: "admin" });
-    } else {
-      done(null, false);
-    } */
+
+    done(null, { username: "admin" });
+  } else {
+    done(null, false);
+  } */
     let result = [];
     try {
         result = yield users.findByUsername(username);
-        console.log('user found');
+        console.log("user found");
     }
     catch (error) {
         console.error(`Error during authentication for user ${username}: ${error}`);
@@ -75,9 +75,9 @@ koa_passport_1.default.use(new passport_http_1.BasicStrategy((username, password
     }
     if (result.length) {
         const user = result[0];
-        console.log('username: ' + user.username);
+        console.log("username: " + user.username);
         if (verifyPassword(user, password)) {
-            console.log('done');
+            console.log("done");
             done(null, { user: user });
         }
         else {
@@ -94,16 +94,16 @@ const basicAuth = (ctx, next) => __awaiter(void 0, void 0, void 0, function* () 
     yield koa_passport_1.default.authenticate("basic", { session: false })(ctx, next);
     if (ctx.status == 401) {
         ctx.body = {
-            message: 'you are not authorized'
+            message: "you are not authorized",
         };
     }
     /*
-      else {
-       const user = ctx.state.user;
-         console.log('user=> '+JSON.stringify(user))
-        console.log('status=> '+ctx.status)
-      ctx.body = {message: `Hello ${user.user.username} you registered on ${user.user.dateregistered}`}
-        }
-        */
+    else {
+     const user = ctx.state.user;
+       console.log('user=> '+JSON.stringify(user))
+      console.log('status=> '+ctx.status)
+    ctx.body = {message: `Hello ${user.user.username} you registered on ${user.user.dateregistered}`}
+      }
+      */
 });
 exports.basicAuth = basicAuth;
