@@ -5,11 +5,12 @@ CREATE TABLE public.users (
 	username varchar(16) NOT NULL,
 	about text NULL,
 	dateregistered timestamp NOT NULL DEFAULT now(),
-	"password" varchar(32) NULL,
-	passwordsalt varchar(16) NULL,
+	"password" varchar(255) NULL,
+	passwordsalt varchar(225) NULL,
 	email varchar(64) NOT NULL,
-	avatarurl varchar(64) NULL,
+	avatarurl varchar(2048) NULL,
   role text, 
+  
 	CONSTRAINT users_email_key UNIQUE (email),
 	CONSTRAINT users_pkey PRIMARY KEY (id),
 	CONSTRAINT users_username_key UNIQUE (username)
