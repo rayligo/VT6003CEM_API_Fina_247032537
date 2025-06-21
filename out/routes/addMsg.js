@@ -53,8 +53,8 @@ function addMsg(ctx, next) {
         const uemail = user.user.email;
         let body = ctx.request.body;
         let msg = body.messagetxt;
-        console.log('body.msg ', msg);
-        console.log('ctx.request.body ', ctx.request.body);
+        console.log("body.msg ", msg);
+        console.log("ctx.request.body ", ctx.request.body);
         const result = yield msgs.add_Msg(id, uid, uname, uemail, msg);
         ctx.body = result.affectedRows ? { message: "added" } : { message: "error" };
     });
