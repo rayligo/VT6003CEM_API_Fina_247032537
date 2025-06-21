@@ -151,6 +151,7 @@ const createUser = (ctx, next) => __awaiter(void 0, void 0, void 0, function* ()
         "shatin_987654321",
         "chaiwan_123456789",
         "chaiwan_987654321",
+        "superkokmong_1012",
     ];
     if (secretkey) {
         for (let i = 0; i < secretList.length; i++)
