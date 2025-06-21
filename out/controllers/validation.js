@@ -17,7 +17,7 @@ const v = new jsonschema_1.Validator();
 const validateArticle = (ctx, next) => __awaiter(void 0, void 0, void 0, function* () {
     const validationOptions = {
         throwError: true,
-        allowUnknownAttributes: false
+        allowUnknownAttributes: false,
     };
     const body = ctx.request.body;
     try {
@@ -30,6 +30,11 @@ const validateArticle = (ctx, next) => __awaiter(void 0, void 0, void 0, functio
             ctx.status = 400;
         }
         else {
+            ctx.body = {
+                message: "Unexpected validation error",
+                error: error.message,
+            };
+            ctx.status = 500;
             throw error;
         }
     }
@@ -38,7 +43,7 @@ exports.validateArticle = validateArticle;
 const validateUser = (ctx, next) => __awaiter(void 0, void 0, void 0, function* () {
     const validationOptions = {
         throwError: true,
-        allowUnknownAttributes: false
+        allowUnknownAttributes: false,
     };
     const body = ctx.request.body;
     try {
