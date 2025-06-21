@@ -18,14 +18,14 @@ const run_query = (query, values) => __awaiter(void 0, void 0, void 0, function*
         yield sequelize.authenticate();
         let data = yield sequelize.query(query, {
             replacements: values,
-            type: sequelize_1.QueryTypes.SELECT
+            type: sequelize_1.QueryTypes.SELECT,
         });
         yield sequelize.close();
         return data;
     }
     catch (err) {
         console.error(err, query, values);
-        throw 'Database query error';
+        throw "Database query error";
     }
 });
 exports.run_query = run_query;
@@ -35,14 +35,14 @@ const run_insert = (sql, values) => __awaiter(void 0, void 0, void 0, function* 
         yield sequelize.authenticate();
         let data = yield sequelize.query(sql, {
             replacements: values,
-            type: sequelize_1.QueryTypes.INSERT
+            type: sequelize_1.QueryTypes.INSERT,
         });
         yield sequelize.close();
         return data;
     }
     catch (err) {
         console.error(err, sql, values);
-        throw 'Database insert error';
+        throw "Database insert error";
     }
 });
 exports.run_insert = run_insert;
