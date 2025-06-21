@@ -54,24 +54,33 @@ const favs = __importStar(require("../models/favs"));
 const msgs = __importStar(require("../models/msgs"));
 const validation_1 = require("../controllers/validation");
 const auth_1 = require("../controllers/auth");
-const router = new koa_router_1.default({ prefix: '/api/v1/articles' });
+const router = new koa_router_1.default({ prefix: "/api/v1/articles" });
 exports.router = router;
 const getAll = (ctx, next) => __awaiter(void 0, void 0, void 0, function* () {
     //ctx.body = articles;
-    const { limit = 100, page = 1, order = "dateCreated", direction = 'ASC' } = ctx.request.query;
+    const { limit = 100, page = 1, order = "dateCreated", direction = "ASC", } = ctx.request.query;
     const parsedLimit = parseInt(limit, 10);
     const parsedPage = parseInt(page, 10);
     const result = yield model.getAll(20, 1, order, direction);
     if (result.length) {
         const body = result.map((post) => {
-            const { id = 0, title = "", alltext = "", summary = "", imageurl = "", authorid = 0, description = "" } = post;
+            const { id = 0, title = "", alltext = "", summary = "", imageurl = "", authorid = 0, description = "", } = post;
             const links = {
                 likes: `http://${ctx.host}/api/v1/articles/${post.id}/likes`,
                 fav: `http://${ctx.host}/api/v1/articles/${post.id}/fav`,
                 msg: `http://${ctx.host}/api/v1/articles/${post.id}/msg`,
-                self: `http://${ctx.host}/api/v1/articles/${post.id}`
+                self: `http://${ctx.host}/api/v1/articles/${post.id}`,
             };
-            return { id, title, alltext, summary, imageurl, authorid, description, links }; // Utilizing the destructured elements
+            return {
+                id,
+                title,
+                alltext,
+                summary,
+                imageurl,
+                authorid,
+                description,
+                links,
+            }; // Utilizing the destructured elements
         });
         ctx.body = body;
         yield next();
@@ -80,7 +89,7 @@ const getAll = (ctx, next) => __awaiter(void 0, void 0, void 0, function* () {
 const createArticle = (ctx, next) => __awaiter(void 0, void 0, void 0, function* () {
     const body = ctx.request.body;
     console.log(`role of user ${ctx.state.user.user.role}`);
-    if (ctx.state.user.user.role === 'admin') {
+    if (ctx.state.user.user.role === "admin") {
         let result = yield model.add(body);
         if (result.status == 201) {
             ctx.status = 201;
@@ -110,9 +119,9 @@ const getById = (ctx, next) => __awaiter(void 0, void 0, void 0, function* () {
 });
 const updateArticle = (ctx, next) => __awaiter(void 0, void 0, void 0, function* () {
     let id = +ctx.params.id;
-    if (ctx.state.user.user.role === 'admin') {
+    if (ctx.state.user.user.role === "admin") {
         let c = ctx.request.body;
-        console.log('authorid ' + c.authorid);
+        console.log("authorid " + c.authorid);
         if (c.authorid == ctx.state.user.user.id) {
             let result = yield model.update(c, id);
             if (result) {
@@ -122,25 +131,29 @@ const updateArticle = (ctx, next) => __awaiter(void 0, void 0, void 0, function*
             yield next();
         }
         else {
-            ctx.body = { message: 'You are not the author and you have no right to update this article' };
+            ctx.body = {
+                message: "You are not the author and you have no right to update this article",
+            };
             ctx.status = 401;
         }
     }
     else {
-        ctx.body = { msg: ' you are not authorized' };
+        ctx.body = { msg: " you are not authorized" };
         ctx.status = 401;
     }
 });
 const deleteArticle = (ctx, next) => __awaiter(void 0, void 0, void 0, function* () {
     let id = +ctx.params.id;
-    if (ctx.state.user.user.role === 'admin') {
+    if (ctx.state.user.user.role === "admin") {
         let article = yield model.deleteById(id);
         ctx.status = 201;
-        ctx.body = article.affectedRows ? { message: "removed" } : { message: "error" };
+        ctx.body = article.affectedRows
+            ? { message: "removed" }
+            : { message: "error" };
         yield next();
     }
     else {
-        ctx.body = { msg: ' you are not authorized' };
+        ctx.body = { msg: " you are not authorized" };
         ctx.status = 401;
     }
 });
@@ -161,7 +174,9 @@ function likePost(ctx, next) {
         const uid = user.user.id;
         const id = parseInt(ctx.params.id);
         const result = yield likes.like(id, uid);
-        ctx.body = result.affectedRows ? { message: "liked", userid: result.userid } : { message: "error" };
+        ctx.body = result.affectedRows
+            ? { message: "liked", userid: result.userid }
+            : { message: "error" };
         yield next();
     });
 }
@@ -172,7 +187,9 @@ function dislikePost(ctx, next) {
         const uid = user.user.id;
         const id = parseInt(ctx.params.id);
         const result = yield likes.dislike(id, uid);
-        ctx.body = result.affectedRows ? { message: "disliked" } : { message: "error" };
+        ctx.body = result.affectedRows
+            ? { message: "disliked" }
+            : { message: "error" };
         yield next();
     });
 }
@@ -194,7 +211,9 @@ function postFav(ctx, next) {
         const uid = user.user.id;
         const id = parseInt(ctx.params.id);
         const result = yield favs.addFav(id, uid);
-        ctx.body = result.affectedRows ? { message: "added", userid: result.userid } : { message: "error" };
+        ctx.body = result.affectedRows
+            ? { message: "added", userid: result.userid }
+            : { message: "error" };
         yield next();
     });
 }
@@ -205,7 +224,9 @@ function rmFav(ctx, next) {
         const uid = user.user.id;
         const id = parseInt(ctx.params.id);
         const result = yield favs.removeFav(id, uid);
-        ctx.body = result.affectedRows ? { message: "removed" } : { message: "error" };
+        ctx.body = result.affectedRows
+            ? { message: "removed" }
+            : { message: "error" };
         yield next();
     });
 }
@@ -226,8 +247,8 @@ function addMsg(ctx, next) {
         const uname = user.user.username;
         const uemail = user.user.email;
         let msg = ctx.request.body;
-        console.log('ctx.request.body ', ctx.request.body);
-        console.log('..msg ', msg);
+        console.log("ctx.request.body ", ctx.request.body);
+        console.log("..msg ", msg);
         const result = yield msgs.add_Msg(id, uid, uname, uemail, msg);
         ctx.body = result.affectedRows ? { message: "added" } : { message: "error" };
         yield next();
@@ -237,30 +258,34 @@ function rmMsg(ctx, next) {
     return __awaiter(this, void 0, void 0, function* () {
         // const uid = ctx.state.user.id;
         // only admin can del article comment
-        if (ctx.state.user.user.role === 'admin') {
+        if (ctx.state.user.user.role === "admin") {
             let b = ctx.request.body;
             const id = parseInt(ctx.params.id);
             const result = yield msgs.removeMsg(id, b);
-            ctx.body = result.affectedRows ? { message: "removed" } : { message: "error" };
+            ctx.body = result.affectedRows
+                ? { message: "removed" }
+                : { message: "error" };
             yield next();
         }
         else {
-            ctx.body = { msg: ` ${ctx.state.user.user.role} role is not authorized to delete user comment` };
+            ctx.body = {
+                msg: ` ${ctx.state.user.user.role} role is not authorized to delete user comment`,
+            };
             ctx.status = 401;
         }
     });
 }
-router.get('/', getAll);
-router.post('/', auth_1.basicAuth, (0, koa_bodyparser_1.default)(), validation_1.validateArticle, createArticle);
-router.get('/:id([0-9]{1,})', getById);
-router.put('/:id([0-9]{1,})', auth_1.basicAuth, (0, koa_bodyparser_1.default)(), validation_1.validateArticle, updateArticle);
-router.delete('/:id([0-9]{1,})', auth_1.basicAuth, deleteArticle);
-router.get('/:id([0-9]{1,})/likes', likesCount);
-router.post('/:id([0-9]{1,})/likes', auth_1.basicAuth, likePost);
-router.del('/:id([0-9]{1,})/likes', auth_1.basicAuth, dislikePost);
-router.get('/fav', auth_1.basicAuth, userFav);
-router.post('/:id([0-9]{1,})/fav', auth_1.basicAuth, postFav);
-router.del('/:id([0-9]{1,})/fav', auth_1.basicAuth, rmFav);
-router.get('/:id([0-9]{1,})/msg', listMsg);
-router.post('/:id([0-9]{1,})/msg', auth_1.basicAuth, (0, koa_bodyparser_1.default)(), addMsg);
-router.del('/:id([0-9]{1,})/msg', auth_1.basicAuth, (0, koa_bodyparser_1.default)(), rmMsg);
+router.get("/", getAll);
+router.post("/", auth_1.basicAuth, (0, koa_bodyparser_1.default)(), validation_1.validateArticle, createArticle);
+router.get("/:id([0-9]{1,})", getById);
+router.put("/:id([0-9]{1,})", auth_1.basicAuth, (0, koa_bodyparser_1.default)(), validation_1.validateArticle, updateArticle);
+router.delete("/:id([0-9]{1,})", auth_1.basicAuth, deleteArticle);
+router.get("/:id([0-9]{1,})/likes", likesCount);
+router.post("/:id([0-9]{1,})/likes", auth_1.basicAuth, likePost);
+router.del("/:id([0-9]{1,})/likes", auth_1.basicAuth, dislikePost);
+router.get("/fav", auth_1.basicAuth, userFav);
+router.post("/:id([0-9]{1,})/fav", auth_1.basicAuth, postFav);
+router.del("/:id([0-9]{1,})/fav", auth_1.basicAuth, rmFav);
+router.get("/:id([0-9]{1,})/msg", listMsg);
+router.post("/:id([0-9]{1,})/msg", auth_1.basicAuth, (0, koa_bodyparser_1.default)(), addMsg);
+router.del("/:id([0-9]{1,})/msg", auth_1.basicAuth, (0, koa_bodyparser_1.default)(), rmMsg);
