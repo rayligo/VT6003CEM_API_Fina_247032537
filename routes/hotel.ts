@@ -1,6 +1,7 @@
 import Router, { RouterContext } from "koa-router";
 import { config } from "../config";
 import axios from "axios";
+import { basicAuth } from "../controllers/auth";
 
 const router: Router = new Router({ prefix: "/api/v1/hotel" });
 
@@ -55,5 +56,5 @@ const getAll = async (ctx: RouterContext, next: any) => {
   await next();
 };
 
-router.post("/", getAll);
+router.post("/", basicAuth, getAll);
 export { router };
