@@ -1,38 +1,43 @@
-import { Validator, ValidationError } from 'jsonschema';
-import { RouterContext } from 'koa-router';
-import { article } from '../schema/article.schema';
-import { user } from '../schema/user.schema';
+import { Validator, ValidationError } from "jsonschema";
+import { RouterContext } from "koa-router";
+import { article } from "../schema/article.schema";
+import { user } from "../schema/user.schema";
 
-const v = new Validator()
+const v = new Validator();
 
 export const validateArticle = async (ctx: RouterContext, next: any) => {
   const validationOptions = {
     throwError: true,
-    allowUnknownAttributes: false
-  }
+    allowUnknownAttributes: false,
+  };
   const body = ctx.request.body;
   try {
-    v.validate(body, article, validationOptions)
-    await next()
+    v.validate(body, article, validationOptions);
+    await next();
   } catch (error) {
     if (error instanceof ValidationError) {
       ctx.body = error;
       ctx.status = 400;
     } else {
+      ctx.body = {
+        message: "Unexpected validation error",
+        error: error.message,
+      };
+      ctx.status = 500;
       throw error;
     }
   }
-}
+};
 
 export const validateUser = async (ctx: RouterContext, next: any) => {
   const validationOptions = {
     throwError: true,
-    allowUnknownAttributes: false
-  }
+    allowUnknownAttributes: false,
+  };
   const body = ctx.request.body;
   try {
-    v.validate(body, user, validationOptions)
-    await next()
+    v.validate(body, user, validationOptions);
+    await next();
   } catch (error) {
     if (error instanceof ValidationError) {
       ctx.body = error;
@@ -41,4 +46,4 @@ export const validateUser = async (ctx: RouterContext, next: any) => {
       throw error;
     }
   }
-}
+};
