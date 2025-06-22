@@ -12,13 +12,6 @@ const verifyPassword = (user: any, password: string) => {
 };
 passport.use(
   new BasicStrategy(async (username, password, done) => {
-    // Replace this with your own authentication logic
-    /*if (username === "admin" && password === "password") {tsc
-
-    done(null, { username: "admin" });
-  } else {
-    done(null, false);
-  } */
     let result: any[] = [];
     try {
       result = await users.findByUsername(username);
@@ -53,12 +46,4 @@ export const basicAuth = async (ctx: RouterContext, next: any) => {
       message: "you are not authorized",
     };
   }
-  /*
-  else {
-   const user = ctx.state.user; 
-     console.log('user=> '+JSON.stringify(user))
-    console.log('status=> '+ctx.status)
-  ctx.body = {message: `Hello ${user.user.username} you registered on ${user.user.dateregistered}`} 
-    }
-    */
 };
