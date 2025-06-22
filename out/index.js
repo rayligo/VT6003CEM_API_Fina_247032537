@@ -24,17 +24,11 @@ const special_1 = require("./routes/special");
 const uploads_1 = require("./routes/uploads");
 const users_1 = require("./routes/users");
 const hotel_1 = require("./routes/hotel");
+const flights_1 = require("./routes/flights");
+const flightPackage_1 = require("./routes/flightPackage");
 const koa_static_1 = __importDefault(require("koa-static"));
 const app = new koa_1.default();
 const router = new koa_router_1.default();
-/*const welcomeAPI = async (ctx: RouterContext, next:any) => {
-  ctx.body = {message: "Welcome to the blog API!"};
-  await next();
-}
-
-router.get('/api/v1', welcomeAPI);
-*/
-// For Document:
 app.use((0, koa_static_1.default)("./docs"));
 app.use((0, cors_1.default)());
 app.use((0, koa_logger_1.default)());
@@ -47,6 +41,8 @@ app.use(special_1.router.middleware());
 app.use(uploads_1.router.middleware());
 app.use(users_1.router.middleware());
 app.use(hotel_1.router.middleware());
+app.use(flights_1.router.middleware());
+app.use(flightPackage_1.router.middleware());
 app.use((ctx, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield next();

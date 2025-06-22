@@ -57,13 +57,6 @@ const verifyPassword = (user, password) => {
     return bcryptjs_1.default.compareSync(password, hash);
 };
 koa_passport_1.default.use(new passport_http_1.BasicStrategy((username, password, done) => __awaiter(void 0, void 0, void 0, function* () {
-    // Replace this with your own authentication logic
-    /*if (username === "admin" && password === "password") {tsc
-
-    done(null, { username: "admin" });
-  } else {
-    done(null, false);
-  } */
     let result = [];
     try {
         result = yield users.findByUsername(username);
@@ -97,13 +90,5 @@ const basicAuth = (ctx, next) => __awaiter(void 0, void 0, void 0, function* () 
             message: "you are not authorized",
         };
     }
-    /*
-    else {
-     const user = ctx.state.user;
-       console.log('user=> '+JSON.stringify(user))
-      console.log('status=> '+ctx.status)
-    ctx.body = {message: `Hello ${user.user.username} you registered on ${user.user.dateregistered}`}
-      }
-      */
 });
 exports.basicAuth = basicAuth;
