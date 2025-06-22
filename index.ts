@@ -10,19 +10,13 @@ import { router as special } from "./routes/special";
 import { router as uploads } from "./routes/uploads";
 import { router as users } from "./routes/users";
 import { router as hotel } from "./routes/hotel";
+import { router as flights } from "./routes/flights";
+import { router as flightPackage } from "./routes/flightPackage";
 import serve from "koa-static";
 
 const app: Koa = new Koa();
 const router: Router = new Router();
 
-/*const welcomeAPI = async (ctx: RouterContext, next:any) => {
-  ctx.body = {message: "Welcome to the blog API!"};
-  await next();
-}
-
-router.get('/api/v1', welcomeAPI);
-*/
-// For Document:
 app.use(serve("./docs"));
 app.use(cors());
 app.use(logger());
@@ -35,6 +29,8 @@ app.use(special.middleware());
 app.use(uploads.middleware());
 app.use(users.middleware());
 app.use(hotel.middleware());
+app.use(flights.middleware());
+app.use(flightPackage.middleware());
 
 app.use(async (ctx: RouterContext, next: any) => {
   try {
